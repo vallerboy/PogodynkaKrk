@@ -8,6 +8,15 @@ public class WeatherModel {
     private int clouds;
     private String weatherComment;
 
+    private WeatherModel(Builder builder) {
+        cityName = builder.getCityName();
+        temperature = builder.getTemperature();
+        pressure = builder.getPressure();
+        humidity = builder.getHumidity();
+        clouds = builder.getClouds();
+        weatherComment = builder.getWeatherComment();
+    }
+
 
     public String getCityName() {
         return cityName;
