@@ -1,5 +1,6 @@
 package pl.oskarpolak.weather.views;
 
+import javax.swing.*;
 import java.util.Scanner;
 
 public class MainMenu {
@@ -26,6 +27,6 @@ public class MainMenu {
     }
 
     public void sendMessageToConsole(String message){
-        System.out.println(message);
+        JOptionPane.showMessageDialog(null, message);
     }
 }

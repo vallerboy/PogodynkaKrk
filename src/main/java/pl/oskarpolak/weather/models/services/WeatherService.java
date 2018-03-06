@@ -4,7 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import pl.oskarpolak.weather.models.Utils;
 import pl.oskarpolak.weather.models.WeatherModel;
+import pl.oskarpolak.weather.models.WeatherObserver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,12 +18,19 @@ public class WeatherService {
         return ourInstance;
     }
     private ExecutorService executorService;
+    private List<WeatherObserver> weatherObserverList;
 
     private WeatherService() {
+        weatherObserverList = new ArrayList<>();
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    public void getWeather(String city){
+    public void registerObserver(WeatherObserver weatherObserver){
+        weatherObserverList.add(weatherObserver);
+    }
+
+    public void getWeather(final String city){
+
         executorService.execute(new Runnable() {
             public void run() {
                 String websiteResponse = Utils.readWebsiteContent("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=ef2028e98b54649bf1f4c4582631f350");
@@ -45,11 +55,31 @@ public class WeatherService {
                 JSONObject cloudsObject = root.getJSONObject("clouds");
                 clouds = cloudsObject.getInt("all");
 
+                WeatherModel weatherModel = new WeatherModel.Builder(city)
+                        .setTemperature(temperature)
+                        .setHumidity(humidity)
+                        .setPressure(pressure)
+                        .setClouds(clouds)
+                        .setWeatherComment(description)
+                        .build();
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                notifyObservers(weatherModel);
             }
         });
+
+
     }
 
-
+    private void notifyObservers(WeatherModel weatherModel) {
+        for (WeatherObserver weatherObserver : weatherObserverList) {
+            weatherObserver.onWeatherComing(weatherModel);
+        }
+    }
 
 
 }
