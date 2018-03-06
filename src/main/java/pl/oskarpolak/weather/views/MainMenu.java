@@ -15,7 +15,7 @@ public class MainMenu {
     }
 
     public String getCityFromUser(){
-        System.out.println("=--- Podaj miasto: ");
+        System.out.print("=--- Podaj miasto: ");
         return scanner.nextLine();
     }
 

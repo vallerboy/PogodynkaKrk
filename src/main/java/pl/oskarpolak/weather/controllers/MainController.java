@@ -1,12 +1,23 @@
 package pl.oskarpolak.weather.controllers;
 
 import pl.oskarpolak.weather.models.services.WeatherService;
+import pl.oskarpolak.weather.views.MainMenu;
 
 public class MainController {
     private WeatherService weatherService = WeatherService.getInstance();
+    private MainMenu mainMenu;
+
+    public MainController(){
+        mainMenu = new MainMenu();
+    }
 
     public void run() {
-        //todo test
-        System.out.println(weatherService.getWeather("Kraków"));
+
+        String response;
+        do{
+            response = mainMenu.getCityFromUser();
+            mainMenu.sendMessageToConsole(String.valueOf(weatherService.getWeather(response)));
+        }while (!response.equals("exit"));
+
     }
 }
